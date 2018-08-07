@@ -59,7 +59,7 @@ def send_reminder(names, event_url, recap, hours):
 def send_chat_message(message):
     client = Client(bot_email, bot_pwd)
     client.login(bot_email, bot_pwd)
-    client.send(Message(text="test"), thread_id='500949883413912', thread_type=ThreadType.GROUP)
+    client.send(Message(text=message), thread_id='500949883413912', thread_type=ThreadType.GROUP)
 
 
 
