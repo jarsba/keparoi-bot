@@ -1,10 +1,6 @@
 ### IMPORTS ###
 import csv
 import sys
-import urllib
-import urllib.request
-import urllib.error
-import tempfile
 from io import StringIO
 from urllib.request import urlopen
 import pandas as pd
@@ -117,10 +113,10 @@ def main():
             happenings.append("{} ({})".format(row[1], "".join(row[5].split(" ")[0])))
 
         if hours == 12 or hours == 24 or hours == 48:
-            if True or minutes < 30:
+            if minutes < 30:
                 send_reminder(names, event_url, recap, hours)
 
-    if True or len(happenings) > 0 and weekday == 6 and time(21, 0) <= time_now <= time(21, 30):
+    if len(happenings) > 0 and weekday == 6 and time(21, 0) <= time_now <= time(21, 30):
         send_timetable(happenings)
 
 if __name__ == "__main__":
