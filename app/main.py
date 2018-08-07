@@ -60,7 +60,7 @@ def send_chat_message(message):
     client = Client(bot_email, bot_pwd)
     client.login(bot_email, bot_pwd)
     client.send(Message(text=message), thread_id='500949883413912', thread_type=ThreadType.GROUP)
-
+    print("### MESSAGE SENT ###")
 
 
 # Find hours between dates
@@ -76,6 +76,8 @@ def delta_hours(date):
 ### MAIN ###
 
 def main():
+
+    print("### STARTING KEPAROI BOT ###")
 
     global bot_email
     global bot_pwd
@@ -118,6 +120,9 @@ def main():
 
     if len(happenings) > 0 and weekday == 6 and time(21, 0) <= time_now <= time(21, 30):
         send_timetable(happenings)
+
+    print("### STOPPING KEPAROI BOT ###")
+
 
 if __name__ == "__main__":
     main()
