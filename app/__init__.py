@@ -62,17 +62,8 @@ def send_reminder(names, event_url, recap, hours):
 # Sends Messenger-message with Facebook Messenger API
 def send_chat_message(message):
     client = Client(bot_email, bot_pwd)
-
     client.login(bot_email, bot_pwd)
-
-    if not client.isLoggedIn():
-        client.login(bot_email, bot_pwd)
-        session_cookies = client.getSession()
-        client.setSession(session_cookies)
-        new_file = open("/tmp/keparoicookie", "w")
-        new_file.write(session_cookies)
-
-    client.send(Message(text=message), thread_id='500949883413912', thread_type=ThreadType.GROUP)
+    client.send(Message(text="test"), thread_id='500949883413912', thread_type=ThreadType.GROUP)
 
 
 
