@@ -8,7 +8,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY /app /app
 WORKDIR /app
 
-ENV keparoibotEmail=""
-ENV keparoibotPw=""
-
 CMD [ "python", "main.py" ]

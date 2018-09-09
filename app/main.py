@@ -1,4 +1,5 @@
 ### IMPORTS ###
+import logging
 import csv
 import sys
 from io import StringIO
@@ -14,6 +15,8 @@ import os
 ### FUNCTIONS ###
 
 # Fetches csv-file from Keparoi-nimenhuuto
+
+
 def fetch_calendar_csv():
     url = 'https://keparoi.nimenhuuto.com/calendar/csv'
     df = pd.read_csv(url)
@@ -50,22 +53,27 @@ def send_reminder(names, event_url, recap, hours):
     elif hours == 48:
         pvm = "YLIHUOMENNA"
     names = " ".join(names)
-    message = "MUISTUTUS: IN / OUT {} {} ({}) {}".format(pvm, recap, event_url, names)
+    message = "MUISTUTUS: IN / OUT {} {} ({}) {}".format(pvm,
+                                                         recap, event_url, names)
     if names == "Eiketään":
-        message = "MUISTUTUS: IN / OUT {} {} ({}) {} <3".format(pvm, recap, event_url, names)
+        message = "MUISTUTUS: IN / OUT {} {} ({}) {} <3".format(
+            pvm, recap, event_url, names)
     send_chat_message(message)
 
 # Sends Messenger-message with Facebook Messenger API
+
+
 def send_chat_message(message):
     client = Client(bot_email, bot_pwd)
     client.login(bot_email, bot_pwd)
-    client.send(Message(text=message), thread_id='500949883413912', thread_type=ThreadType.GROUP)
-    print("### MESSAGE SENT ###")
+    client.send(Message(text=message), thread_id='500949883413912',
+                thread_type=ThreadType.GROUP)
+    logservice.info("MESSAGE SENT")
 
 
 # Find hours between dates
 def delta_hours(date):
-    delta = datetime.strptime(date, "%Y-%m-%dT%H:%M")- datetime.now()
+    delta = datetime.strptime(date, "%Y-%m-%dT%H:%M") - datetime.now()
     days = delta.days
     hours, remainder = divmod(delta.seconds, 3600)
     minutes, seconds = divmod(remainder, 60)
@@ -77,7 +85,18 @@ def delta_hours(date):
 
 def main():
 
-    print("### STARTING KEPAROI BOT ###")
+    logservice = logging.getLogger()
+    logging.basicConfig(filename='bot.log', level=logging.INFO, format='%(asctime)s %(message)s',
+                        datefmt='%d/%m/%Y %H:%M:%S')
+
+    ch = logging.StreamHandler(sys.stdout)
+    ch.setLevel(logging.INFO)
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    ch.setFormatter(formatter)
+    logservice.addHandler(ch)
+
+    logservice.info("STARTING KEPAROI BOT")
 
     global bot_email
     global bot_pwd
@@ -85,13 +104,14 @@ def main():
     try:
         bot_email = os.environ['keparoibotEmail']
     except KeyError:
-        print("Please set the environment variable keparoibotEmail")
+        logservice.critical(
+            "Please set the environment variable keparoibotEmail")
         sys.exit(1)
 
     try:
         bot_pwd = os.environ['keparoibotPw']
     except KeyError:
-        print("Please set the environment variable keparoibotPw")
+        logservice.critical("Please set the environment variable keparoibotPw")
         sys.exit(1)
 
     event_list = fetch_calendar_csv()
@@ -112,7 +132,8 @@ def main():
         hours, minutes = delta_hours(date_iso)
         names = fetch_event_parse_names(event_url)
         if hours < 168:
-            happenings.append("{} ({})".format(row[1], "".join(row[5].split(" ")[0])))
+            happenings.append("{} ({})".format(
+                row[1], "".join(row[5].split(" ")[0])))
 
         if hours == 12 or hours == 24 or hours == 48:
             if minutes < 30:
@@ -121,7 +142,7 @@ def main():
     if len(happenings) > 0 and weekday == 6 and time(21, 0) <= time_now <= time(21, 30):
         send_timetable(happenings)
 
-    print("### STOPPING KEPAROI BOT ###")
+    logservice.info("STOPPING KEPAROI BOT")
 
 
 if __name__ == "__main__":
