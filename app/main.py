@@ -126,7 +126,7 @@ def main():
                 weekdays[weekday_number], recap, event_url))
 
         if hours == 12 or hours == 24 or hours == 48:
-            if minutes < 30 or True:
+            if minutes < 30:
                 send_reminder(names, event_url, recap, weekdays[weekday_number])
 
     if len(happenings) > 0 and weekday == 6 and time(21, 0) <= time_now <= time(21, 30):
