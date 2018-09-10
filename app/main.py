@@ -14,9 +14,8 @@ import os
 
 ### FUNCTIONS ###
 
+
 # Fetches csv-file from Keparoi-nimenhuuto
-
-
 def fetch_calendar_csv():
     url = 'https://keparoi.nimenhuuto.com/calendar/csv'
     df = pd.read_csv(url)
@@ -44,25 +43,13 @@ def send_timetable(happenings):
 
 
 # Reminds to update IN/OUTS-status for specific training
-def send_reminder(names, event_url, recap, hours):
-    pvm = ""
-    if hours == 12:
-        pvm = "TÄNÄÄN"
-    elif hours == 24:
-        pvm = "HUOMENNA"
-    elif hours == 48:
-        pvm = "YLIHUOMENNA"
+def send_reminder(names, event_url, recap, date_str):
     names = " ".join(names)
-    message = "MUISTUTUS: IN / OUT {} {} ({}) {}".format(pvm,
-                                                         recap, event_url, names)
-    if names == "Eiketään":
-        message = "MUISTUTUS: IN / OUT {} {} ({}) {} <3".format(
-            pvm, recap, event_url, names)
-    send_chat_message(message)
+    if names != "Eiketään":
+        message = "MUISTUTUS:\nIN / OUT\n{} {}\n({})\n{}\n".format(date_str,recap, event_url, names)
+        send_chat_message(message)
 
 # Sends Messenger-message with Facebook Messenger API
-
-
 def send_chat_message(message):
     client = Client(bot_email, bot_pwd)
     client.login(bot_email, bot_pwd)
@@ -84,7 +71,9 @@ def delta_hours(date):
 ### MAIN ###
 
 def main():
+    weekdays = ['MAANANTAINA','TIISTAINA','KESKIVIIKKONA','TORSTAINA','PERJANTAINA','LAUANTAINA','SUNNUNTAINA']
 
+    global logservice
     logservice = logging.getLogger()
     logging.basicConfig(filename='bot.log', level=logging.INFO, format='%(asctime)s %(message)s',
                         datefmt='%d/%m/%Y %H:%M:%S')
@@ -129,15 +118,16 @@ def main():
         starting_time = row[3]
         event_url = "".join(row[5].split(" ")[0])
         date_iso = date + "T" + starting_time
+        weekday_number = datetime.strptime(date_iso, "%Y-%m-%dT%H:%M").weekday()
         hours, minutes = delta_hours(date_iso)
         names = fetch_event_parse_names(event_url)
         if hours < 168:
-            happenings.append("{} ({})".format(
-                row[1], "".join(row[5].split(" ")[0])))
+            happenings.append("{}\n {} \n ({})\n".format(
+                weekdays[weekday_number], recap, event_url))
 
         if hours == 12 or hours == 24 or hours == 48:
-            if minutes < 30:
-                send_reminder(names, event_url, recap, hours)
+            if minutes < 30 or True:
+                send_reminder(names, event_url, recap, weekdays[weekday_number])
 
     if len(happenings) > 0 and weekday == 6 and time(21, 0) <= time_now <= time(21, 30):
         send_timetable(happenings)
