@@ -1,4 +1,5 @@
 ### IMPORTS ###
+
 import logging
 import csv
 import sys
@@ -13,7 +14,6 @@ from fbchat.models import *
 import os
 
 ### FUNCTIONS ###
-
 
 # Fetches csv-file from Keparoi-nimenhuuto
 def fetch_calendar_csv():
@@ -121,7 +121,7 @@ def main():
         weekday_number = datetime.strptime(date_iso, "%Y-%m-%dT%H:%M").weekday()
         hours, minutes = delta_hours(date_iso)
         names = fetch_event_parse_names(event_url)
-        if hours < 168:
+        if hours < 171 and hours > 3:
             happenings.append("{}\n {} \n ({})\n".format(
                 weekdays[weekday_number], recap, event_url))
 
