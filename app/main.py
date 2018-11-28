@@ -157,8 +157,6 @@ def main():
     if len(happenings) > 0 and weekday == 6 and time(21, 0) <= time_now <= time(21, 30):
         send_timetable(happenings)
 
-    send_test_message()
-
     logservice.info("STOPPING KEPAROI BOT")
 
 
