@@ -8,7 +8,6 @@ RUN ln -sf /usr/share/zoneinfo/Europe/Helsinki /etc/localtime
 RUN date
 RUN pip install --no-cache-dir -r requirements.txt
 
-
 COPY /app /app
 WORKDIR /app
 

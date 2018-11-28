@@ -15,6 +15,31 @@ import os
 
 ### FUNCTIONS ###
 
+
+# Send test message
+def send_test_message():
+    send_chat_message("Testing functionality, ignore this message")
+
+# Gets session token from file
+def get_session_token():
+    session_token = ''
+    try:
+        f = open("session_token.txt", "r")
+        session_token = f.read()
+    except:
+        logservice.error("Could not read session token from the file")
+    return session_token
+
+# Writes session token to a file (overwrites the old one)
+def set_session_token(token):
+    try:
+        f = open("session_token.txt", "w+")
+        f.write(token)
+        f.seek(0)
+    except:
+        logservice.error("Could not write session token to a file")
+
+
 # Fetches csv-file from Keparoi-nimenhuuto
 def fetch_calendar_csv():
     url = 'https://keparoi.nimenhuuto.com/calendar/csv'
@@ -51,8 +76,8 @@ def send_reminder(names, event_url, recap, date_str):
 
 # Sends Messenger-message with Facebook Messenger API
 def send_chat_message(message):
-    client = Client(bot_email, bot_pwd)
-    client.login(bot_email, bot_pwd)
+    client = Client('<email>', '<password>', session_cookies=get_session_token())
+    set_session_token(client.getSession())
     client.send(Message(text=message), thread_id='500949883413912',
                 thread_type=ThreadType.GROUP)
     logservice.info("MESSAGE SENT")
@@ -131,6 +156,8 @@ def main():
 
     if len(happenings) > 0 and weekday == 6 and time(21, 0) <= time_now <= time(21, 30):
         send_timetable(happenings)
+
+    send_test_message()
 
     logservice.info("STOPPING KEPAROI BOT")
 
