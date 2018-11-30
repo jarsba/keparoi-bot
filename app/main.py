@@ -30,6 +30,7 @@ def get_session_token():
         f.close()
     except:
         logservice.error("Could not read session token from the file")
+    print(session_token)
     return session_token
 
 # Writes session token to a file (overwrites the old one)
@@ -170,7 +171,6 @@ def main():
         send_timetable(happenings)
 
     logservice.info("STOPPING KEPAROI BOT")
-
 
 if __name__ == "__main__":
     main()
