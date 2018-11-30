@@ -30,7 +30,6 @@ def get_session_token():
         f.close()
     except:
         logservice.error("Could not read session token from the file")
-    print(session_token)
     return session_token
 
 # Writes session token to a file (overwrites the old one)
