@@ -15,7 +15,6 @@ import os
 
 ### FUNCTIONS ###
 
-
 # Send test message
 def send_test_message():
     send_chat_message("Testing functionality, ignore this message")
@@ -37,7 +36,6 @@ def get_session_token():
 def set_session_token(token):
     token_path = os.path.join(bot_path, "session_token.txt")
     try:
-
         f = open(token_path, "w+")
         f.write(json.dumps(token))
         f.seek(0)
