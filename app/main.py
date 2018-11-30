@@ -121,6 +121,7 @@ def main():
     global bot_path
     global bot_email
     global bot_pwd
+    global test_bot
 
     try:
         bot_path = os.environ['keparoibotPath']
@@ -145,9 +146,12 @@ def main():
     try:
         test_bot = os.environ['keparoibotTesting']
         if test_bot == 'true':
+            logservice.info("Environment variable keparoibotTesting set to true, using testing mode")
             send_test_message()
+        else:
+            logservice.info("Please set the environment variable keparoibotTesting to true, if want to use testing mode")
     except KeyError:
-        logservice.info("No environment variable set to keparoibotTesting")
+        pass
 
     event_list = fetch_calendar_csv()
     time_now = datetime.now().time()
