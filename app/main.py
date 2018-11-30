@@ -80,7 +80,7 @@ def send_reminder(names, event_url, recap, date_str):
 
 # Sends Messenger-message with Facebook Messenger API
 def send_chat_message(message):
-    client = Client('<email>', '<password>', session_cookies=get_session_token())
+    client = Client(bot_email, bot_pwd, session_cookies=get_session_token(), user_agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36")
     set_session_token(client.getSession())
     client.send(Message(text=message), thread_id='500949883413912',
                 thread_type=ThreadType.GROUP)
