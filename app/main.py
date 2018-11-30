@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime, time
 from fbchat import Client
 from fbchat.models import *
-
+import json
 import os
 
 ### FUNCTIONS ###
@@ -26,7 +26,8 @@ def get_session_token():
     token_path = os.path.join(bot_path, "session_token.txt")
     try:
         f = open(token_path, "r")
-        session_token += f.read()
+        token_txt = f.read()
+        session_token = json.loads(token_txt)
         f.close()
     except:
         logservice.error("Could not read session token from the file")
@@ -36,8 +37,9 @@ def get_session_token():
 def set_session_token(token):
     token_path = os.path.join(bot_path, "session_token.txt")
     try:
+
         f = open(token_path, "w+")
-        f.write(str(token))
+        f.write(json.dumps(token))
         f.seek(0)
         f.close()
     except:
@@ -80,7 +82,7 @@ def send_reminder(names, event_url, recap, date_str):
 
 # Sends Messenger-message with Facebook Messenger API
 def send_chat_message(message):
-    client = Client(bot_email, bot_pwd, session_cookies=get_session_token(), user_agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36")
+    client = Client(bot_email, bot_pwd, session_cookies=get_session_token())
     set_session_token(client.getSession())
     client.send(Message(text=message), thread_id='500949883413912',
                 thread_type=ThreadType.GROUP)
@@ -139,6 +141,13 @@ def main():
     except KeyError:
         logservice.critical("Please set the environment variable keparoibotPw")
         sys.exit(1)
+
+    try:
+        test_bot = os.environ['keparoibotTesting']
+        if test_bot == 'true':
+            send_test_message()
+    except KeyError:
+        logservice.info("No environment variable set to keparoibotTesting")
 
     event_list = fetch_calendar_csv()
     time_now = datetime.now().time()
