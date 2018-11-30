@@ -23,19 +23,23 @@ def send_test_message():
 # Gets session token from file
 def get_session_token():
     session_token = ''
+    token_path = os.path.join(bot_path, "session_token.txt")
     try:
-        f = open("session_token.txt", "r")
-        session_token = f.read()
+        f = open(token_path, "r")
+        session_token += f.read()
+        f.close()
     except:
         logservice.error("Could not read session token from the file")
     return session_token
 
 # Writes session token to a file (overwrites the old one)
 def set_session_token(token):
+    token_path = os.path.join(bot_path, "session_token.txt")
     try:
-        f = open("session_token.txt", "w+")
-        f.write(token)
+        f = open(token_path, "w+")
+        f.write(str(token))
         f.seek(0)
+        f.close()
     except:
         logservice.error("Could not write session token to a file")
 
@@ -112,8 +116,16 @@ def main():
 
     logservice.info("STARTING KEPAROI BOT")
 
+    global bot_path
     global bot_email
     global bot_pwd
+
+    try:
+        bot_path = os.environ['keparoibotPath']
+    except KeyError:
+        logservice.critical(
+            "Please set the environment variable keparoibotPath")
+        sys.exit(1)
 
     try:
         bot_email = os.environ['keparoibotEmail']
